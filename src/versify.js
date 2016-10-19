@@ -1,16 +1,24 @@
 (function ($) {
     $.fn.versify = function (options) {
+
         var opts = $.extend({}, $.fn.versify.defaults, options);
         var self = this;
+
+        var verses = $(opts.verseSelector).map(function (idx, verse) {
+            return {
+                from: parseFloat($(verse).attr(opts.fromClassname)),
+                to: parseFloat($(verse).attr(opts.toClassname)),
+                element: verse
+            }
+        })
+
         this.bind("timeupdate", function () {
-            $(opts.verseSelector).each(function () {
-                var from = parseFloat($(this).attr(opts.fromClassname))
-                var to = parseFloat($(this).attr(opts.toClassname))
-                var time = self[0].currentTime
-                if ((from <= time) && (to > time)) {
-                    $(this).toggleClass(opts.activeClassname, true)
+            var time = self[0].currentTime
+            $(verses).each(function (idx, verse) {
+                if ((verse.from <= time) && (verse.to > time)) {
+                    $(verse.element).toggleClass(opts.activeClassname, true)
                 } else {
-                    $(this).toggleClass(opts.activeClassname, false)
+                    $(verse.element).toggleClass(opts.activeClassname, false)
                 }
             })
         })
